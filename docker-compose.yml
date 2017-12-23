@@ -1,0 +1,64 @@
+
+node('master') {
+    
+    stage('continuous_download') 
+    {
+       git 'https://github.com/selenium-saikrishna/maven.git'
+    }
+
+    stage('continuous_build') 
+    {
+      sh '''mvn clean
+      mvn package'''
+    }
+
+    stage('continuous_deploymnent') 
+    {
+      sh 'scp /var/lib/jenkins/workspace/Dev_01/webapp/target/webapp.war vagrant@192.168.50.22:/var/lib/tomcat7/webapps/qaenv.war'
+    }
+
+    stage('continuous_testing') 
+    {
+        git 'https://github.com/selenium-saikrishna/testing.git'
+        sh '''java -jar  
+        /var/lib/jenkins/workspace/Testing/target/testing2.jar'''
+ 
+    }
+    post
+    {
+      success
+      {
+        stage('continuous_delivery')
+        {
+          sh 'scp /var/lib/jenkins/workspace/Dev_01/webapp/target/webapp.war vagrant@192.168.50.33:/var/lib/tomcat7/webapps/prodenv.war'
+}
+}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}   
+
+
+
+
+

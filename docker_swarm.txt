@@ -1,0 +1,153 @@
+Some of these necessary features include:
+Health Checks on the Containers
+Launching a fixed set of Containers for a particular Docker image
+Scaling the number of Containers up and down depending on the load
+Performing rolling update of software across containers
+
+
+
+manager
+============
+to create a swarm manGER
+
+docker swarm init --advertise-addr <MANAGER-IP>
+The --advertise-addr flag configures the manager node to 
+publish its address as 192.168.99.100
+
+to join another node as manager
+docker swarm join-token manager
+
+
+to find the list of swarm nodes
+docker node ls
+
+to join a node to swarm manager
+docker swarm join --token SWMTKN-1-0c7ryrpky06uagdnpaoss08y5y1dcgb2kojmnluzfwhfbqd3oq-9u5fqftkf4k549o5dbfa1q6cd 192.168.61.100:2377
+
+in manager..to deploy a service to a swarm
+docker service create --replicas 1 --name helloworld alpine ping docker.com
+docker service create --replicas 5 -p 80:80 --name web nginx
+scalling up the above service
+docker service scale web=8
+to find the lsit of services
+docker service ls
+
+to find details of the service deployed
+docker service inspect --pretty helloworld
+
+to see which nodes are running the service:
+docker service ps helloworld
+
+on the node where hello world is running
+docker ps
+
+Once you have deployed a service to a swarm, you are ready to use the Docker CLI to 
+scale the number of containers in the service. 
+Containers running in a service are called “tasks.”
+docker service scale helloworld=5
+
+Run docker service ps <SERVICE-ID> to see the updated task list:
+docker service ps helloworld
+
+to remove a service
+docker service rm helloworld
+
+to verify the removal
+ docker service inspect helloworld
+no such service message is displayed
+docker ps
+
+docker service create \
+  --replicas 3 \
+  --name redis \
+  --update-delay 10s \
+  redis:3.0.6
+
+docker service inspect --pretty redis
+
+update the redis version
+docker service update --image redis:3.0.7 redis
+
+
+docker service inspect --pretty redis
+
+to restart a paused update
+docker service update redis
+
+docker service ps redis
+
+to drain a node so as not to receive any commands from the manager
+docker node update --availability drain worker1
+
+to view the status of the drained node
+docker node inspect --pretty worker1
+
+to activate a drained node
+docker node update --availability active worker1
+
+deploying services to a swarm
+ docker service create nginx
+
+To provide a name for your service, use the --name flag:
+
+$ docker service create --name my_web nginx
+
+
+Assuming that the my_web service from the previous section still exists, use the following command to update it to publish port 80.
+
+$ docker service update --publish-add 80 my_web
+
+docker service create --name="myservice" ubuntu:16.04
+
+Connect the service to an overlay network
+
+ docker network create --driver overlay my-network
+docker service create \
+  --replicas 3 \
+  --network my-network \
+  --name my-web \
+  nginx
+
+You can also connect an existing service to an overlay network using the --network-add flag.
+
+$ docker service update --network-add my-network my-web
+
+To disconnect a running service from a network, use the --network-rm flag.
+
+$ docker service update --network-rm my-network my-web
+
+
+
+to run a service on all the available nodes
+docker service create \
+  --name myservice \
+  --mode global \
+  alpine top
+
+to downgrade a service
+docker service update \
+  --rollback \
+  --update-delay 0s
+  my_web
+
+
+to leave a docker swarm
+docker swarm leave
+to delete from list after it leaves
+
+to mount a volume
+
+docker service create --name nginx \
+  -v /mysite:/usr/share/nginx/html -p 80:80 nginx
+
+
+
+
+
+
+
+
+
+
+
+
