@@ -1,0 +1,10 @@
+<intelliq>
+	<courses>
+		<name>Devops</name>
+		<duration>6 weeks</duration>
+	</courses>
+	<courses>
+		<name>AWS</name>
+		<duration>4 weeks</duration>
+	</courses>
+</intelliq>

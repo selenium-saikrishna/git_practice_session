@@ -1,0 +1,115 @@
+create an ubuntu instance
+security group put ssh and http
+apt-get update
+apt-get upgrade
+apt-get install nagios3
+to open nagios in browser
+ec2servername/nagios3
+
+vi /etc/nagios3/nagios.cfg
+make 
+  check_external_commands=1
+vi /etc/group
+go to nagios line and add www-data
+
+sudo chmod g+w /var/lib/nagios3/rw
+sudo chmod g+w /var/liv/nagios3
+
+sudo service apache2 restart
+sudo service nagios3 restart
+
+Configuring hosts
+================================
+cd /etc/nagios3
+grep cfg_dir /etc/nagios3/nagios.cfg    
+
+cd /etc/nagios3/conf.d
+create a new file
+  vi newhost.cfg
+   define host {
+  host_name store.tup.local
+  alias store
+  address 192.168.0.8
+  max_check_attempts 3
+  check_period 24x7
+  check_command check-host-alive
+  contacts root
+  notification_interval 60
+  notification_period 24x7
+
+to start services
+define service{
+        use    generic-service
+        host_name  ec2-54-244-57-142.us-west-2.compute.amazonaws.com
+        service_description     HTTP
+        check_command   check_http
+        }
+
+}
+  
+:wq
+
+sudo nagios3 -v /etc/nagios3/nagios.cfg | less
+sudo /etc/init.d/nagios3 restart
+
+Passive checks
+===================
+The key features of passive checks are as follows:
+
+Passive checks are initiated and performed by external applications/processes
+Passive check results are submitted to Nagios for processing
+The major difference between active and passive checks is that active checks are 
+initiated and performed by Nagios, while passive checks are performed by external applications.
+
+Uses For Passive Checks
+
+Passive checks are useful for monitoring services that are:
+Asynchronous in nature and cannot be monitored effectively by polling their status 
+on a regularly scheduled basis
+Located behind a firewall and cannot be checked actively from the monitoring host
+Examples of asynchronous services that lend themselves to being monitored passively 
+include SNMP traps and security alerts. You never know how many (if any) traps or 
+alerts you'll receive in a given time frame, so it's not feasible to just monitor their 
+status every few minutes.
+
+Passive checks are also used when configuring distributed or redundant monitoring installations.
+
+How Passive Checks Work
+
+Passive Checks
+Here's how passive checks work in more detail...
+
+An external application checks the status of a host or service.
+
+The external application writes the results of the check to the external command file.
+
+The next time Nagios reads the external command file it will place the results of 
+all passive checks into a queue for later processing. The same queue that is used for storing results from active checks is also used to store the results from passive checks.
+
+
+Active checks
+===============
+The main features of actives checks as as follows:
+
+Active checks are initiated by the Nagios process
+Active checks are run on a regularly scheduled basis
+Active Checks
+How Are Active Checks Performed?
+
+Active checks are initiated by the check logic in the Nagios daemon. When Nagios needs to 
+check the status of a host or service it will execute a plugin and pass it information about 
+what needs to be checked. The plugin will then check the operational state of the host or 
+service and report the results back to the Nagios daemon. Nagios will process the results 
+of the host or service check and take appropriate action as necessary 
+(e.g. send notifications, run event handlers, etc).
+
+More information on how plugins work can be found here.
+
+When Are Active Checks Executed?
+
+Active check are executed:
+
+At regular intervals, as defined by the check_interval and retry_interval options in your 
+host and service definitions
+On-demand as needed
+
