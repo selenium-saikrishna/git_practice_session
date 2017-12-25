@@ -1,3 +1,5 @@
+//These changes are done in github
+
 Some of these necessary features include:
 Health Checks on the Containers
 Launching a fixed set of Containers for a particular Docker image
@@ -43,7 +45,7 @@ docker ps
 
 Once you have deployed a service to a swarm, you are ready to use the Docker CLI to 
 scale the number of containers in the service. 
-Containers running in a service are called ìtasks.î
+Containers running in a service are called ‚Äútasks.‚Äù
 docker service scale helloworld=5
 
 Run docker service ps <SERVICE-ID> to see the updated task list:
